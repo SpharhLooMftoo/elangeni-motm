@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0f18">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Elangeni MOTM">
+  <link rel="manifest" href="data:application/json,{}">
+  <title>Elangeni TVET • MOTM Live Vote</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --league-white: #ffffff;
+      --league-black: #0a0f18;
+      --league-blue: #1e3a5f;
+      --league-red: #c8102e;
+      --gold: #fbbf24;
+      --bg-dark: #060b14;
+      --card-bg: rgba(255,255,255,0.04);
+      --glass: rgba(255,255,255,0.06);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --accent-gradient: linear-gradient(135deg, #c8102e 0%, #1e3a5f 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(200,16,46,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(30,58,95,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(255,255,255,0.03) 0%, transparent 50%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      color: var(--text-primary);
+    }
+
+    .app-container {
+      max-width: 550px;
+      width: 100%;
+      background: rgba(10,15,24,0.9);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2.5rem;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .league-header {
+      background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgba(200,16,46,0.6);
+      position: relative;
+      z-index: 2;
+    }
+
+    .league-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .logo-container {
+      width: 52px;
+      height: 52px;
+      background: var(--accent-gradient);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: white;
+      box-shadow: 0 10px 25px rgba(200,16,46,0.5);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .league-text h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--league-white);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .league-text span {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--league-red);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: rgba(200,16,46,0.15);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    .live-badge {
+      background: var(--league-red);
+      color: white;
+      padding: 0.35rem 1rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: pulse-badge 2s infinite;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(200,16,46,0.6); }
+      50% { opacity: 0.9; box-shadow: 0 0 0 15px rgba(200,16,46,0); }
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: blink-dot 1s infinite;
+    }
+
+    @keyframes blink-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .screen {
+      display: none;
+      padding: 1.5rem;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 0.8rem;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      z-index: 1;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.95rem 1.2rem 0.95rem 3rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: white;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--league-red);
+      background: rgba(200,16,46,0.08);
+      box-shadow: 0 0 0 4px rgba(200,16,46,0.08);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: 50px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 12px 30px rgba(200,16,46,0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(200,16,46,0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    .btn-sm {
+      padding: 0.55rem 1rem;
+      font-size: 0.78rem;
+      width: auto;
+    }
+
+    .btn-xs {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.7rem;
+      width: auto;
+      border-radius: 20px;
+    }
+
+    .btn-danger {
+      background: #ff4757;
+      color: white;
+    }
+
+    .btn-success {
+      background: #2ed573;
+      color: #0a0f18;
+    }
+
+    .fixture-card {
+      background: var(--accent-gradient);
+      border-radius: 22px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+
+    .teams-display {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+    }
+
+    .team-block {
+      text-align: center;
+      flex: 1;
+    }
+
+    .team-logo-display {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.5rem;
+      font-size: 1.8rem;
+      border: 3px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(15px);
+      overflow: hidden;
+    }
+
+    .team-logo-display img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .score-display {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+
+    .player-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 0.9rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s;
+    }
+
+    .player-card:hover {
+      border-color: var(--league-red);
+      background: rgba(200,16,46,0.08);
+    }
+
+    .player-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffffff, #c0c0c0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--league-black);
+      border: 2px solid var(--league-red);
+    }
+
+    .vote-btn {
+      background: var(--league-red);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 25px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.78rem;
+      letter-spacing: 0.5px;
+    }
+
+    .vote-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    .motm-award {
+      background: var(--accent-gradient);
+      border-radius: 25px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      animation: confetti-fall 3s ease-in-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .admin-section {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .admin-section h4 {
+      color: var(--league-red);
+      margin-bottom: 0.8rem;
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--league-black);
+      border: 1px solid var(--league-red);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      z-index: 10000;
+      animation: toast-in 0.3s ease-out;
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      padding: 1rem;
+    }
+
+    .modal-box {
+      background: #111827;
+      border-radius: 20px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 450px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .text-center { text-align: center; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .flex { display: flex; }
+    .gap-1 { gap: 0.5rem; }
+    .gap-2 { gap: 1rem; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-wrap { flex-wrap: wrap; }
+    .w-full { width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="app-container" id="appRoot">
+    <div class="league-header">
+      <div class="league-brand">
+        <div class="logo-container">⚽</div>
+        <div class="league-text">
+          <h2>ELANGENI TVET</h2>
+          <span>Premier League</span>
+        </div>
+      </div>
+      <div class="live-badge">
+        <span class="live-dot"></span> LIVE
+      </div>
+    </div>
+    <div id="screenContainer"></div>
+  </div>
+  <div id="toastContainer"></div>
+  <div id="modalContainer"></div>
+
+  <script>
+    (function() {
+      // ==================== DATABASE ====================
+      const DB_KEYS = {
+        STUDENTS: 'elangeni_students',
+        VOTES: 'elangeni_votes',
+        MATCH: 'elangeni_match',
+        PLAYERS: 'elangeni_players',
+        TEAMS: 'elangeni_teams',
+        ADMIN: 'elangeni_admin'
+      };
+
+      // Initialize with YOUR 12 teams
+      function initDatabase() {
+        // Admin
+        if (!localStorage.getItem(DB_KEYS.ADMIN)) {
+          localStorage.setItem(DB_KEYS.ADMIN, JSON.stringify({ username: 'Admin', password: 'Admin123' }));
+        }
+
+        // Teams - YOUR ACTUAL TEAMS with logo placeholders
+        if (!localStorage.getItem(DB_KEYS.TEAMS)) {
+          const teams = [
+            { id: 't1', name: 'ANKANG FC', logo: '🅰️', color: '#ffffff', logoUrl: '' },
+            { id: 't2', name: 'SINAWE FC', logo: '🅢', color: '#c8102e', logoUrl: '' },
+            { id: 't3', name: 'SAVOY ROVERS FC', logo: '🆂', color: '#1e3a5f', logoUrl: '' },
+            { id: 't4', name: 'ICESA FC', logo: '🅸', color: '#fbbf24', logoUrl: '' },
+            { id: 't5', name: 'GREYVILLE FC', logo: '🅶', color: '#6b7280', logoUrl: '' },
+            { id: 't6', name: 'PIXELY HOUSE FC', logo: '🅿', color: '#8b5cf6', logoUrl: '' },
+            { id: 't7', name: 'MARBLE HOUSE FC', logo: '🅼', color: '#ffffff', logoUrl: '' },
+            { id: 't8', name: 'WINDER FC', logo: '🆆', color: '#06b6d4', logoUrl: '' },
+            { id: 't9', name: 'HOLZNER CITY FC', logo: '🅷', color: '#ef4444', logoUrl: '' },
+            { id: 't10', name: 'THUSI FC', logo: '🆃', color: '#22c55e', logoUrl: '' },
+            { id: 't11', name: 'PALAS FC', logo: '🅿', color: '#3b82f6', logoUrl: '' },
+            { id: 't12', name: 'COWIES HILL FC', logo: '🅲', color: '#f97316', logoUrl: '' }
+          ];
+          localStorage.setItem(DB_KEYS.TEAMS, JSON.stringify(teams));
+        }
+
+        // Players - Empty initially, YOU add them via admin
+        if (!localStorage.getItem(DB_KEYS.PLAYERS)) {
+          localStorage.setItem(DB_KEYS.PLAYERS, JSON.stringify([]));
+        }
+
+        // Match
+        if (!localStorage.getItem(DB_KEYS.MATCH)) {
+          const match = {
+            id: 'match_' + Date.now(),
+            homeTeamId: 't1',
+            awayTeamId: 't2',
+            homeScore: 0,
+            awayScore: 0,
+            status: 'upcoming',
+            date: new Date().toISOString().split('T')[0],
+            time: '15:30',
+            venue: 'Elangeni Main Stadium',
+            motmPlayerId: null,
+            motmAnnounced: false
+          };
+          localStorage.setItem(DB_KEYS.MATCH, JSON.stringify(match));
+        }
+
+        // Votes
+        if (!localStorage.getItem(DB_KEYS.VOTES)) {
+          localStorage.setItem(DB_KEYS.VOTES, JSON.stringify({}));
+        }
+
+        // Students
+        if (!localStorage.getItem(DB_KEYS.STUDENTS)) {
+          localStorage.setItem(DB_KEYS.STUDENTS, JSON.stringify({}));
+        }
+      }
+
+      initDatabase();
+
+      // Getters/Setters
+      function getDB(key) { return JSON.parse(localStorage.getItem(key) || 'null'); }
+      function setDB(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+      function getStudents() { return getDB(DB_KEYS.STUDENTS) || {}; }
+      function getTeams() { return getDB(DB_KEYS.TEAMS) || []; }
+      function getPlayers() { return getDB(DB_KEYS.PLAYERS) || []; }
+      function getMatch() { return getDB(DB_KEYS.MATCH); }
+      function getVotes() { return getDB(DB_KEYS.VOTES) || {}; }
+      function getTeamById(id) { return getTeams().find(t => t.id === id); }
+      function getPlayerById(id) { return getPlayers().find(p => p.id === id); }
+      function getPlayersByTeam(teamId) { return getPlayers().filter(p => p.teamId === teamId); }
+
+      let currentUser = null;
+      let currentAdmin = null;
+
+      // ==================== AUTH ====================
+      function generateOTP() { return Math.floor(100000 + Math.random() * 900000).toString(); }
+
+      function sendOTP(contact) {
+        const otp = generateOTP();
+        sessionStorage.setItem('pending_otp', otp);
+        sessionStorage.setItem('pending_otp_contact', contact);
+        showToast(`📱 OTP sent to ${contact}: ${otp}`);
+        return otp;
+      }
+
+      function verifyOTP(input) { return input === sessionStorage.getItem('pending_otp'); }
+
+      function registerStudent(data) {
+        const students = getStudents();
+        if (students[data.studentNumber]) return { success: false, message: 'Student already registered!' };
+        students[data.studentNumber] = { ...data, registeredAt: new Date().toISOString(), isActive: true };
+        setDB(DB_KEYS.STUDENTS, students);
+        return { success: true, message: 'Registration successful! Please login.' };
+      }
+
+      function loginStudent(sn, pw) {
+        const students = getStudents();
+        const s = students[sn];
+        if (!s) return { success: false, message: 'Student not found!' };
+        if (s.password !== pw) return { success: false, message: 'Wrong password!' };
+        currentUser = { studentNumber: sn, name: s.name, surname: s.surname };
+        return { success: true, message: 'Welcome back!' };
+      }
+
+      function loginAdmin(u, p) {
+        const a = getDB(DB_KEYS.ADMIN);
+        if (a && a.username === u && a.password === p) { currentAdmin = { username: u }; return { success: true }; }
+        return { success: false, message: 'Invalid admin credentials!' };
+      }
+
+      // ==================== VOTING ====================
+      function hasVoted(sn, matchId) {
+        const votes = getVotes();
+        return !!votes[`${matchId}_${sn}`];
+      }
+
+      function castVote(sn, matchId, playerId) {
+        const match = getMatch();
+        if (match.status === 'upcoming') return { success: false, message: 'Voting opens when match is live!' };
+        if (hasVoted(sn, matchId)) return { success: false, message: 'You already voted!' };
+        const votes = getVotes();
+        votes[`${matchId}_${sn}`] = { playerId, timestamp: new Date().toISOString() };
+        setDB(DB_KEYS.VOTES, votes);
+        return { success: true, message: 'Vote recorded! ✅' };
+      }
+
+      function getVoteCounts(matchId) {
+        const votes = getVotes();
+        const counts = {};
+        Object.entries(votes).forEach(([k, v]) => {
+          if (k.startsWith(matchId + '_')) counts[v.playerId] = (counts[v.playerId] || 0) + 1;
+        });
+        return counts;
+      }
+
+      function determineMOTM(matchId) {
+        const match = getMatch();
+        const counts = getVoteCounts(matchId);
+        let maxVotes = -1, candidates = [];
+        Object.entries(counts).forEach(([pid, c]) => {
+          if (c > maxVotes) { maxVotes = c; candidates = [pid]; }
+          else if (c === maxVotes) candidates.push(pid);
+        });
+        if (!candidates.length) return null;
+        if (candidates.length === 1) return getPlayerById(candidates[0]);
+        // FIFA tiebreaker: player from winning team
+        const winningTeam = match.homeScore > match.awayScore ? match.homeTeamId : match.awayScore > match.homeScore ? match.awayTeamId : null;
+        if (winningTeam) {
+          const filtered = candidates.filter(pid => getPlayerById(pid)?.teamId === winningTeam);
+          if (filtered.length) candidates = filtered;
+        }
+        // Lower jersey number wins
+        candidates.sort((a, b) => (getPlayerById(a)?.number || 99) - (getPlayerById(b)?.number || 99));
+        return getPlayerById(candidates[0]);
+      }
+
+      // ==================== UI ====================
+      const container = document.getElementById('screenContainer');
+
+      function showToast(msg) {
+        const tc = document.getElementById('toastContainer');
+        const t = document.createElement('div');
+        t.className = 'toast'; t.textContent = msg;
+        tc.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+      }
+
+      function renderScreen(name) {
+        switch(name) {
+          case 'login': container.innerHTML = loginHTML(); break;
+          case 'register': container.innerHTML = registerHTML(); break;
+          case 'verify-otp': container.innerHTML = otpHTML(); break;
+          case 'recover': container.innerHTML = recoverHTML(); break;
+          case 'home': container.innerHTML = homeHTML(); break;
+          case 'vote': container.innerHTML = voteHTML(); break;
+          case 'results': container.innerHTML = resultsHTML(); break;
+          case 'admin-login': container.innerHTML = adminLoginHTML(); break;
+          case 'admin': container.innerHTML = adminHTML(); break;
+        }
+        attachEvents();
+      }
+
+      // ==================== TEMPLATES ====================
+      function loginHTML() {
+        return `<div class="screen active">
+          <div class="text-center mb-2"><i class="fas fa-futbol" style="font-size:3rem;color:var(--league-red);"></i><h3>Welcome</h3><p style="color:var(--text-secondary);">Login to vote MOTM</p></div>
+          <div class="input-group"><i class="fas fa-id-card"></i><input class="input-field" id="loginSN" placeholder="Student Number"></div>
+          <div class="input-group"><i class="fas fa-lock"></i><input type="password" class="input-field" id="loginPW" placeholder="Password"></div>
+          <button class="btn btn-primary" id="loginBtn">Login</button>
+          <div class="flex gap-1 mt-2"><button class="btn btn-outline btn-sm" id="showReg">Register</button><button class="btn btn-outline btn-sm" id="showRec">Recover</button></div>
+          <button class="btn btn-outline btn-sm mt-2 w-full" id="showAdmin">Admin Portal</button>
+        </div>`;
+      }
+
+      function registerHTML() {
+        return `<div class="screen active"><h3>Register</h3>
+          <input class="input-field mb-1" id="regName" placeholder="First Name">
+          <input class="input-field mb-1" id="regSurname" placeholder="Surname">
+          <input class="input-field mb-1" id="regSN" placeholder="Student Number">
+          <input class="input-field mb-1" id="regPhone" placeholder="Cellphone (for OTP)">
+          <input class="input-field mb-1" id="regEmail" placeholder="Email (recovery)">
+          <input type="password" class="input-field mb-1" id="regPW" placeholder="Password">
+          <input type="password" class="input-field mb-1" id="regCPW" placeholder="Confirm Password">
+          <button class="btn btn-primary" id="regBtn">Register & Verify</button>
+          <button class="btn btn-outline mt-2" id="backLogin">Back</button>
+        </div>`;
+      }
+
+      function otpHTML() {
+        return `<div class="screen active text-center"><i class="fas fa-shield-alt" style="font-size:3rem;color:var(--gold);"></i><h3>Verify OTP</h3>
+          <input class="input-field mb-2" id="otpInput" placeholder="6-digit OTP" maxlength="6">
+          <button class="btn btn-primary" id="verifyOtp">Verify</button>
+          <button class="btn btn-outline mt-2" id="resendOtp">Resend</button>
+        </div>`;
+      }
+
+      function recoverHTML() {
+        return `<div class="screen active"><h3>Recover Account</h3>
+          <input class="input-field mb-2" id="recContact" placeholder="Cellphone or Email">
+          <button class="btn btn-primary" id="recBtn">Find & Send OTP</button>
+          <button class="btn btn-outline mt-2" id="backLogin2">Back</button>
+        </div>`;
+      }
+
+      function homeHTML() {
+        const m = getMatch();
+        const ht = getTeamById(m.homeTeamId);
+        const at = getTeamById(m.awayTeamId);
+        return `<div class="screen active">
+          <div class="fixture-card">
+            <div class="teams-display">
+              <div class="team-block">
+                <div class="team-logo-display">${ht?.logoUrl ? `<img src="${ht.logoUrl}" alt="${ht.name}">` : ht?.logo || '⚪'}</div>
+                <div style="font-weight:700;">${ht?.name || 'TBD'}</div>
+              </div>
+              <div class="score-display">${m.homeScore} - ${m.awayScore}</div>
+              <div class="team-block">
+                <div class="team-logo-display">${at?.logoUrl ? `<img src="${at.logoUrl}" alt="${at.name}">` : at?.logo || '🔴'}</div>
+                <div style="font-weight:700;">${at?.name || 'TBD'}</div>
+              </div>
+            </div>
+            <div class="text-center mt-1" style="font-weight:700;">${m.status === 'live' ? '🔴 LIVE' : m.status === 'finished' ? '⏹️ FULL TIME' : '⏳ UPCOMING'}</div>
+          </div>
+          <p class="text-center" style="color:var(--text-secondary);">📅 ${m.date} • ${m.time} • ${m.venue}</p>
+          ${(m.status === 'live' || m.status === 'finished') ? `<button class="btn btn-primary mt-2" id="goVote">Vote MOTM</button>` : '<p class="text-center mt-2" style="color:var(--gold);">Voting opens at kickoff</p>'}
+          ${m.motmAnnounced ? `<button class="btn btn-outline mt-1" id="viewRes">View MOTM</button>` : ''}
+          <button class="btn btn-outline mt-1" id="logoutBtn">Logout</button>
+        </div>`;
+      }
+
+      function voteHTML() {
+        const m = getMatch();
+        const homePlayers = getPlayersByTeam(m.homeTeamId);
+        const awayPlayers = getPlayersByTeam(m.awayTeamId);
+        const counts = getVoteCounts(m.id);
+        const ht = getTeamById(m.homeTeamId);
+        const at = getTeamById(m.awayTeamId);
+        const renderPlayers = (players, teamName) => players.map(p => `
+          <div class="player-card">
+            <div class="flex items-center gap-2">
+              <div class="player-avatar">${p.number}</div>
+              <div><strong>${p.name}</strong><br><small style="color:var(--text-secondary);">#${p.number} • ${p.position || 'Player'}</small></div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span style="font-weight:700;">${counts[p.id] || 0}</span>
+              <button class="vote-btn" data-pid="${p.id}" ${hasVoted(currentUser?.studentNumber, m.id) ? 'disabled' : ''}>${hasVoted(currentUser?.studentNumber, m.id) ? '✓' : 'VOTE'}</button>
+            </div>
+          </div>`).join('');
+        return `<div class="screen active"><h4>Cast Your Vote</h4>
+          <div class="mb-2"><strong>${ht?.name}</strong>${renderPlayers(homePlayers)}</div>
+          <div class="mb-2"><strong>${at?.name}</strong>${renderPlayers(awayPlayers)}</div>
+          <button class="btn btn-outline" id="backHome">Back</button>
+        </div>`;
+      }
+
+      function resultsHTML() {
+        const m = getMatch();
+        const motm = m.motmPlayerId ? getPlayerById(m.motmPlayerId) : null;
+        if (!motm) return `<div class="screen active text-center"><h3>Not announced yet</h3><button class="btn btn-outline mt-2" id="backHome2">Back</button></div>`;
+        const team = getTeamById(motm.teamId);
+        const counts = getVoteCounts(m.id);
+        return `<div class="screen active"><div class="motm-award">
+          <i class="fas fa-trophy" style="font-size:4rem;color:var(--gold);"></i><h2>MAN OF THE MATCH</h2>
+          <div class="player-avatar" style="width:80px;height:80px;font-size:2rem;margin:1rem auto;">${motm.number}</div>
+          <h3>${motm.name}</h3><p>${team?.name}</p>
+          <p style="font-size:2rem;font-weight:900;">${counts[motm.id] || 0} votes</p>
+        </div><button class="btn btn-outline mt-2" id="backHome2">Back</button></div>`;
+      }
+
+      function adminLoginHTML() {
+        return `<div class="screen active text-center"><i class="fas fa-crown" style="font-size:3rem;color:var(--gold);"></i><h3>Admin Portal</h3>
+          <input class="input-field mb-2" id="adminUser" placeholder="Username">
+          <input type="password" class="input-field mb-2" id="adminPass" placeholder="Password">
+          <button class="btn btn-primary" id="adminLoginBtn">Access</button>
+          <button class="btn btn-outline mt-2" id="backMain">Back</button>
+        </div>`;
+      }
+
+      function adminHTML() {
+        const m = getMatch();
+        const teams = getTeams();
+        const players = getPlayers();
+        const counts = getVoteCounts(m.id);
+        return `<div class="screen active"><h3>Admin Dashboard</h3><p style="color:var(--gold);">${new Date().toLocaleDateString()}</p>
+          <div class="admin-section"><h4>Match Control</h4>
+            <div class="flex gap-1 mb-1">
+              <select class="input-field" id="admHome" style="flex:1;">${teams.map(t => `<option value="${t.id}" ${t.id===m.homeTeamId?'selected':''}>${t.name}</option>`).join('')}</select>
+              <select class="input-field" id="admAway" style="flex:1;">${teams.map(t => `<option value="${t.id}" ${t.id===m.awayTeamId?'selected':''}>${t.name}</option>`).join('')}</select>
+            </div>
+            <div class="flex gap-1 mb-1">
+              <input type="number" class="input-field" id="admHScore" value="${m.homeScore}" style="flex:1;">
+              <input type="number" class="input-field" id="admAScore" value="${m.awayScore}" style="flex:1;">
+            </div>
+            <input class="input-field mb-1" id="admDate" type="date" value="${m.date}">
+            <input class="input-field mb-1" id="admTime" type="time" value="${m.time}">
+            <input class="input-field mb-1" id="admVenue" value="${m.venue}">
+            <select class="input-field mb-1" id="admStatus">
+              <option value="upcoming" ${m.status==='upcoming'?'selected':''}>Upcoming</option>
+              <option value="live" ${m.status==='live'?'selected':''}>Live</option>
+              <option value="finished" ${m.status==='finished'?'selected':''}>Finished</option>
+            </select>
+            <button class="btn btn-primary" id="updateMatch">Update Match</button>
+          </div>
+          <div class="admin-section"><h4>Teams & Logos</h4>
+            ${teams.map(t => `<div class="flex items-center justify-between mb-1"><span>${t.logo} ${t.name}</span><button class="btn btn-xs btn-outline upload-logo-btn" data-tid="${t.id}">Upload Logo</button></div>`).join('')}
+          </div>
+          <div class="admin-section"><h4>Players (${players.length})</h4>
+            <button class="btn btn-sm btn-success mb-1" id="addPlayerBtn">+ Add Player</button>
+            ${players.map(p => `<div class="flex items-center justify-between mb-1"><span>#${p.number} ${p.name} <small>(${getTeamById(p.teamId)?.name})</small></span><button class="btn btn-xs btn-danger del-player-btn" data-pid="${p.id}">Delete</button></div>`).join('')}
+          </div>
+          <div class="admin-section"><h4>MOTM</h4>
+            ${m.motmAnnounced ? '<p>✅ Announced</p>' : '<button class="btn btn-primary btn-sm" id="announceMotm">Announce MOTM</button>'}
+          </div>
+          <button class="btn btn-outline mt-2" id="adminLogout">Exit Admin</button>
+        </div>`;
+      }
+
+      // ==================== EVENTS ====================
+      function attachEvents() {
+        document.getElementById('loginBtn')?.addEventListener('click', () => {
+          const r = loginStudent(document.getElementById('loginSN')?.value.trim(), document.getElementById('loginPW')?.value);
+          showToast(r.message);
+          if (r.success) renderScreen('home');
+        });
+        document.getElementById('showReg')?.addEventListener('click', () => renderScreen('register'));
+        document.getElementById('showRec')?.addEventListener('click', () => renderScreen('recover'));
+        document.getElementById('showAdmin')?.addEventListener('click', () => renderScreen('admin-login'));
+        document.getElementById('backLogin')?.addEventListener('click', () => renderScreen('login'));
+        document.getElementById('backLogin2')?.addEventListener('click', () => renderScreen('login'));
+        document.getElementById('backMain')?.addEventListener('click', () => renderScreen('login'));
+
+        document.getElementById('regBtn')?.addEventListener('click', () => {
+          const pw = document.getElementById('regPW')?.value, cpw = document.getElementById('regCPW')?.value;
+          if (pw !== cpw) { showToast('Passwords mismatch!'); return; }
+          if (pw.length < 6) { showToast('Password too short!'); return; }
+          const data = {
+            name: document.getElementById('regName')?.value.trim(),
+            surname: document.getElementById('regSurname')?.value.trim(),
+            studentNumber: document.getElementById('regSN')?.value.trim(),
+            cellphone: document.getElementById('regPhone')?.value.trim(),
+            email: document.getElementById('regEmail')?.value.trim(),
+            password: pw
+          };
+          if (!data.name || !data.studentNumber || !data.cellphone) { showToast('Fill required fields!'); return; }
+          sessionStorage.setItem('pending_reg', JSON.stringify(data));
+          sendOTP(data.cellphone);
+          renderScreen('verify-otp');
+        });
+
+        document.getElementById('verifyOtp')?.addEventListener('click', () => {
+          if (!verifyOTP(document.getElementById('otpInput')?.value)) { showToast('Invalid OTP!'); return; }
+          const data = JSON.parse(sessionStorage.getItem('pending_reg'));
+          const r = registerStudent(data);
+          showToast(r.message);
+          if (r.success) { sessionStorage.clear(); renderScreen('login'); }
+        });
+
+        document.getElementById('resendOtp')?.addEventListener('click', () => {
+          const data = JSON.parse(sessionStorage.getItem('pending_reg'));
+          if (data) sendOTP(data.cellphone);
+        });
+
+        document.getElementById('recBtn')?.addEventListener('click', () => {
+          const contact = document.getElementById('recContact')?.value.trim();
+          const students = getStudents();
+          let found = null;
+          Object.entries(students).forEach(([sn, s]) => {
+            if (s.cellphone === contact || s.email === contact) found = sn;
+          });
+          if (found) { sendOTP(contact); showToast(`Account found: ${found}`); }
+          else showToast('No account found!');
+        });
+
+        document.getElementById('goVote')?.addEventListener('click', () => renderScreen('vote'));
+        document.getElementById('viewRes')?.addEventListener('click', () => renderScreen('results'));
+        document.getElementById('backHome')?.addEventListener('click', () => renderScreen('home'));
+        document.getElementById('backHome2')?.addEventListener('click', () => renderScreen('home'));
+        document.getElementById('logoutBtn')?.addEventListener('click', () => { currentUser = null; renderScreen('login'); });
+
+        document.querySelectorAll('.vote-btn[data-pid]').forEach(b => {
+          b.addEventListener('click', (e) => {
+            if (!currentUser) { showToast('Login first!'); return; }
+            const r = castVote(currentUser.studentNumber, getMatch().id, e.target.getAttribute('data-pid'));
+            showToast(r.message);
+            if (r.success) setTimeout(() => renderScreen('vote'), 500);
+          });
+        });
+
+        document.getElementById('adminLoginBtn')?.addEventListener('click', () => {
+          const r = loginAdmin(document.getElementById('adminUser')?.value.trim(), document.getElementById('adminPass')?.value);
+          showToast(r.message || 'Welcome Admin');
+          if (r.success) renderScreen('admin');
+        });
+
+        document.getElementById('updateMatch')?.addEventListener('click', () => {
+          const m = getMatch();
+          m.homeTeamId = document.getElementById('admHome')?.value;
+          m.awayTeamId = document.getElementById('admAway')?.value;
+          m.homeScore = parseInt(document.getElementById('admHScore')?.value) || 0;
+          m.awayScore = parseInt(document.getElementById('admAScore')?.value) || 0;
+          m.date = document.getElementById('admDate')?.value;
+          m.time = document.getElementById('admTime')?.value;
+          m.venue = document.getElementById('admVenue')?.value;
+          m.status = document.getElementById('admStatus')?.value;
+          setDB(DB_KEYS.MATCH, m);
+          showToast('✅ Match updated!');
+          renderScreen('admin');
+        });
+
+        document.getElementById('announceMotm')?.addEventListener('click', () => {
+          const m = getMatch();
+          const motm = determineMOTM(m.id);
+          if (!motm) { showToast('No votes yet!'); return; }
+          m.motmPlayerId = motm.id;
+          m.motmAnnounced = true;
+          setDB(DB_KEYS.MATCH, m);
+          launchConfetti();
+          showToast(`🏆 MOTM: ${motm.name}!`);
+          renderScreen('admin');
+        });
+
+        document.getElementById('adminLogout')?.addEventListener('click', () => { currentAdmin = null; renderScreen('login'); });
+
+        document.getElementById('addPlayerBtn')?.addEventListener('click', () => showAddPlayerModal());
+
+        document.querySelectorAll('.upload-logo-btn').forEach(b => {
+          b.addEventListener('click', (e) => {
+            const tid = e.target.getAttribute('data-tid');
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = (ev) => {
+              const file = ev.target.files[0];
+              if (file && file.size < 2*1024*1024) {
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                  const teams = getTeams();
+                  const team = teams.find(t => t.id === tid);
+                  if (team) { team.logoUrl = re.target.result; setDB(DB_KEYS.TEAMS, teams); showToast('Logo updated!'); renderScreen('admin'); }
+                };
+                reader.readAsDataURL(file);
+              } else showToast('File too large!');
+            };
+            input.click();
+          });
+        });
+
+        document.querySelectorAll('.del-player-btn').forEach(b => {
+          b.addEventListener('click', (e) => {
+            const pid = e.target.getAttribute('data-pid');
+            let players = getPlayers();
+            players = players.filter(p => p.id !== pid);
+            setDB(DB_KEYS.PLAYERS, players);
+            showToast('Player removed');
+            renderScreen('admin');
+          });
+        });
+      }
+
+      function showAddPlayerModal() {
+        const modal = document.getElementById('modalContainer');
+        const teams = getTeams();
+        modal.innerHTML = `<div class="modal-overlay" id="playerModal">
+          <div class="modal-box">
+            <h3>Add Player</h3>
+            <input class="input-field mb-1" id="newPName" placeholder="Player Name">
+            <input class="input-field mb-1" type="number" id="newPNumber" placeholder="Jersey Number">
+            <input class="input-field mb-1" id="newPPos" placeholder="Position">
+            <select class="input-field mb-1" id="newPTeam">${teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}</select>
+            <div class="flex gap-1">
+              <button class="btn btn-primary btn-sm" id="savePlayer">Save</button>
+              <button class="btn btn-outline btn-sm" id="closeModal">Cancel</button>
+            </div>
+          </div>
+        </div>`;
+        document.getElementById('closeModal')?.addEventListener('click', () => modal.innerHTML = '');
+        document.getElementById('savePlayer')?.addEventListener('click', () => {
+          const players = getPlayers();
+          players.push({
+            id: 'p_' + Date.now(),
+            name: document.getElementById('newPName')?.value.trim(),
+            number: parseInt(document.getElementById('newPNumber')?.value) || 0,
+            position: document.getElementById('newPPos')?.value.trim(),
+            teamId: document.getElementById('newPTeam')?.value
+          });
+          setDB(DB_KEYS.PLAYERS, players);
+          modal.innerHTML = '';
+          showToast('Player added!');
+          renderScreen('admin');
+        });
+      }
+
+      function launchConfetti() {
+        const c = document.createElement('div');
+        c.className = 'confetti-container';
+        document.body.appendChild(c);
+        const colors = ['#c8102e','#ffffff','#1e3a5f','#fbbf24','#ff4757','#2ed573'];
+        for (let i=0;i<120;i++) {
+          const p = document.createElement('div');
+          p.className = 'confetti-piece';
+          p.style.cssText = `left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*3}s;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;
+          c.appendChild(p);
+        }
+        setTimeout(() => c.remove(), 5000);
+      }
+
+      // Start
+      renderScreen('login');
+      console.log('🏆 Elangeni TVET MOTM System Ready');
+      console.log('👑 Admin: username=Admin password=Admin123');
+      console.log('⚽ 12 Teams loaded - Add players via Admin Panel');
+    })();
+  </script>
+</body>
+</html>
